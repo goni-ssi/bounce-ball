@@ -1,4 +1,5 @@
 import { Ball } from "./ball";
+import { Block } from "./block";
 
 class App {
   #canvas: HTMLCanvasElement;
@@ -7,6 +8,7 @@ class App {
   #stageWidth: number;
   #stageHeight: number;
   #ball: Ball;
+  #block: Block;
 
   constructor() {
     this.#canvas = document.createElement("canvas");
@@ -31,7 +33,13 @@ class App {
       stageWidth: this.#stageWidth,
       stageHeight: this.#stageHeight,
       radius: 60,
-      speed: 10,
+      speed: 50,
+    });
+    this.#block = new Block({
+      x: 300,
+      y: 450,
+      width: 700,
+      height: 30,
     });
   }
 
@@ -47,8 +55,8 @@ class App {
 
   animate() {
     this.#ctx.clearRect(0, 0, this.#stageWidth, this.#stageHeight);
-    this.#ball.draw(this.#ctx);
-
+    this.#block.draw(this.#ctx);
+    this.#ball.draw(this.#ctx, this.#block);
     requestAnimationFrame(this.animate);
   }
 }
