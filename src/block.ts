@@ -48,4 +48,9 @@ export class Block {
     ctx.closePath();
     ctx.fill();
   }
+
+  move(x: number, y: number) {
+    this.x = x;
+    this.y = y;
+  }
 }

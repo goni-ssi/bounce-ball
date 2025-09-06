@@ -24,8 +24,11 @@ class App {
 
     this.resize = this.resize.bind(this);
     this.animate = this.animate.bind(this);
+    this.mouseMove = this.mouseMove.bind(this);
 
     window.addEventListener("resize", this.resize);
+    window.addEventListener("mousemove", this.mouseMove);
+
     requestAnimationFrame(this.animate);
 
     this.resize();
@@ -33,7 +36,7 @@ class App {
       stageWidth: this.#stageWidth,
       stageHeight: this.#stageHeight,
       radius: 60,
-      speed: 50,
+      speed: 25,
     });
     this.#block = new Block({
       x: 300,
@@ -58,6 +61,10 @@ class App {
     this.#block.draw(this.#ctx);
     this.#ball.draw(this.#ctx, this.#block);
     requestAnimationFrame(this.animate);
+  }
+
+  mouseMove(e: MouseEvent) {
+    this.#block.move(e.clientX, e.clientY);
   }
 }
 
