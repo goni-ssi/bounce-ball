@@ -1,5 +1,6 @@
 import { Ball } from "./ball";
 import { Block } from "./block";
+import { KeyboardManager } from "./keyboard-manager";
 
 class App {
   #canvas: HTMLCanvasElement;
@@ -24,10 +25,8 @@ class App {
 
     this.resize = this.resize.bind(this);
     this.animate = this.animate.bind(this);
-    this.mouseMove = this.mouseMove.bind(this);
 
     window.addEventListener("resize", this.resize);
-    window.addEventListener("mousemove", this.mouseMove);
 
     requestAnimationFrame(this.animate);
 
@@ -43,6 +42,28 @@ class App {
       y: 450,
       width: 700,
       height: 30,
+    });
+
+    const keyboardManager = new KeyboardManager({ interval: 10 });
+    const KEYBOARD_MOVE_SPEED = 20;
+    keyboardManager.subscribe((keys) => {
+      keys.forEach((key) => {
+        if (key === "ArrowUp") {
+          this.#block.move(this.#block.x, this.#block.y - KEYBOARD_MOVE_SPEED);
+        }
+
+        if (key === "ArrowDown") {
+          this.#block.move(this.#block.x, this.#block.y + KEYBOARD_MOVE_SPEED);
+        }
+
+        if (key === "ArrowLeft") {
+          this.#block.move(this.#block.x - KEYBOARD_MOVE_SPEED, this.#block.y);
+        }
+
+        if (key === "ArrowRight") {
+          this.#block.move(this.#block.x + KEYBOARD_MOVE_SPEED, this.#block.y);
+        }
+      });
     });
   }
 
@@ -61,10 +82,6 @@ class App {
     this.#block.draw(this.#ctx);
     this.#ball.draw(this.#ctx, this.#block);
     requestAnimationFrame(this.animate);
-  }
-
-  mouseMove(e: MouseEvent) {
-    this.#block.move(e.clientX, e.clientY);
   }
 }
 
