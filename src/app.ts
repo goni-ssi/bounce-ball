@@ -1,5 +1,6 @@
 import { Ball } from "./ball";
 import { Bar } from "./bar";
+import { BlockMap } from "./block";
 import { KeyboardManager } from "./keyboard-manager";
 
 class App {
@@ -9,7 +10,8 @@ class App {
   #stageWidth: number;
   #stageHeight: number;
   #ball: Ball;
-  #block: Bar;
+  #bar: Bar;
+  #blockMap: BlockMap;
 
   constructor() {
     this.#canvas = document.createElement("canvas");
@@ -31,17 +33,27 @@ class App {
     requestAnimationFrame(this.animate);
 
     this.resize();
-    this.#ball = new Ball({
-      stageWidth: this.#stageWidth,
-      stageHeight: this.#stageHeight,
-      radius: 60,
-      speed: 25,
-    });
-    this.#block = new Bar({
+    this.#bar = new Bar({
       x: Math.floor(this.#stageWidth * 0.5) - 350,
       y: Math.floor(this.#stageHeight * 0.85),
       width: 700,
       height: 30,
+    });
+    this.#blockMap = new BlockMap({
+      stageWidth: this.#stageWidth,
+      stageHeight: this.#stageHeight,
+      blockWidth: 80,
+      blockHeight: 80,
+    });
+    this.#ball = new Ball({
+      stageWidth: this.#stageWidth,
+      stageHeight: this.#stageHeight,
+      radius: 30,
+      speed: 30,
+      x: Math.floor(this.#stageWidth * 0.5),
+      y: Math.floor(this.#stageHeight * 0.5),
+      bar: this.#bar,
+      blockMap: this.#blockMap,
     });
 
     const keyboardManager = new KeyboardManager({ interval: 10 });
@@ -49,11 +61,11 @@ class App {
     keyboardManager.subscribe((keys) => {
       keys.forEach((key) => {
         if (key === "ArrowLeft") {
-          this.#block.move(this.#block.x - KEYBOARD_MOVE_SPEED, this.#block.y);
+          this.#bar.move(this.#bar.x - KEYBOARD_MOVE_SPEED, this.#bar.y);
         }
 
         if (key === "ArrowRight") {
-          this.#block.move(this.#block.x + KEYBOARD_MOVE_SPEED, this.#block.y);
+          this.#bar.move(this.#bar.x + KEYBOARD_MOVE_SPEED, this.#bar.y);
         }
       });
     });
@@ -71,8 +83,9 @@ class App {
 
   animate() {
     this.#ctx.clearRect(0, 0, this.#stageWidth, this.#stageHeight);
-    this.#block.draw(this.#ctx);
-    this.#ball.draw(this.#ctx, this.#block);
+    this.#bar.draw(this.#ctx);
+    this.#ball.draw(this.#ctx);
+    this.#blockMap.draw(this.#ctx);
     requestAnimationFrame(this.animate);
   }
 }

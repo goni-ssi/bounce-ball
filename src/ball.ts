@@ -1,4 +1,5 @@
 import { Bar } from "./bar";
+import { Block, BlockMap } from "./block";
 
 export class Ball {
   stageWidth: number;
@@ -10,26 +11,37 @@ export class Ball {
   vx: number;
   vy: number;
   diameter: number;
+  bar: Bar;
+  blockMap: BlockMap;
 
   constructor({
     stageWidth,
     stageHeight,
     radius,
     speed,
+    x,
+    y,
+    bar,
+    blockMap,
   }: {
     stageWidth: number;
     stageHeight: number;
     radius: number;
     speed: number;
+    x: number;
+    y: number;
+    bar: Bar;
+    blockMap: BlockMap;
   }) {
     this.stageWidth = stageWidth;
     this.stageHeight = stageHeight;
     this.radius = radius;
     this.speed = speed;
-
+    this.bar = bar;
+    this.x = x;
+    this.y = y;
     this.diameter = radius * 2;
-    this.x = radius + Math.random() * (stageWidth - radius);
-    this.y = radius + Math.random() * (stageHeight - radius);
+    this.blockMap = blockMap;
 
     this.vx = speed;
     this.vy = speed;
@@ -38,7 +50,7 @@ export class Ball {
     this.bounceWindow = this.bounceWindow.bind(this);
   }
 
-  draw(ctx: CanvasRenderingContext2D, block: Bar) {
+  draw(ctx: CanvasRenderingContext2D) {
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
 
@@ -47,7 +59,14 @@ export class Ball {
     ctx.closePath();
 
     this.bounceWindow();
-    this.bounceBlock(block);
+    this.bounceBar(this.bar);
+
+    for (const block of this.blockMap.blocks) {
+      if (this.bounceBlock(block)) {
+        this.blockMap.blocks = this.blockMap.blocks.filter((b) => b !== block);
+        break;
+      }
+    }
 
     this.x += this.vx;
     this.y += this.vy;
@@ -63,11 +82,11 @@ export class Ball {
     }
   }
 
-  bounceBlock(block: Bar) {
-    const centerMinX = block.x - this.radius;
-    const centerMaxX = block.x + block.width + this.radius;
-    const centerMinY = block.y - this.radius;
-    const centerMaxY = block.y + block.height + this.radius;
+  bounceBar(bar: Bar) {
+    const centerMinX = bar.x - this.radius;
+    const centerMaxX = bar.x + bar.width + this.radius;
+    const centerMinY = bar.y - this.radius;
+    const centerMaxY = bar.y + bar.height + this.radius;
 
     const isBlockHit =
       centerMinX <= this.x &&
@@ -92,7 +111,7 @@ export class Ball {
       // 수평 충돌
       this.vx = -this.vx;
       // 공을 블록 밖으로 밀어내기
-      if (this.x < block.x + block.width / 2) {
+      if (this.x < bar.x + bar.width / 2) {
         // 왼쪽에서 충돌
         this.x = centerMinX;
       } else {
@@ -103,7 +122,7 @@ export class Ball {
       // 수직 충돌
       this.vy = -this.vy;
       // 공을 블록 밖으로 밀어내기
-      if (this.y < block.y + block.height / 2) {
+      if (this.y < bar.y + bar.height / 2) {
         // 위쪽에서 충돌
         this.y = centerMinY;
       } else {
@@ -111,5 +130,55 @@ export class Ball {
         this.y = centerMaxY;
       }
     }
+  }
+
+  bounceBlock(block: Block) {
+    const centerMinX = block.x - this.radius;
+    const centerMaxX = block.x + block.width + this.radius;
+    const centerMinY = block.y - this.radius;
+    const centerMaxY = block.y + block.height + this.radius;
+
+    const isBlockHit =
+      centerMinX <= this.x &&
+      this.x <= centerMaxX &&
+      centerMinY <= this.y &&
+      this.y <= centerMaxY;
+
+    if (isBlockHit) {
+      const minDistanceX = Math.min(
+        Math.abs(centerMinX - this.x),
+        Math.abs(centerMaxX - this.x)
+      );
+      const minDistanceY = Math.min(
+        Math.abs(centerMinY - this.y),
+        Math.abs(centerMaxY - this.y)
+      );
+
+      if (minDistanceX < minDistanceY) {
+        // 수평 충돌
+        this.vx = -this.vx;
+        // 공을 블록 밖으로 밀어내기
+        if (this.x < block.x + block.width / 2) {
+          // 왼쪽에서 충돌
+          this.x = centerMinX;
+        } else {
+          // 오른쪽에서 충돌
+          this.x = centerMaxX;
+        }
+      } else {
+        // 수직 충돌
+        this.vy = -this.vy;
+        // 공을 블록 밖으로 밀어내기
+        if (this.y < block.y + block.height / 2) {
+          // 위쪽에서 충돌
+          this.y = centerMinY;
+        } else {
+          // 아래쪽에서 충돌
+          this.y = centerMaxY;
+        }
+      }
+    }
+
+    return isBlockHit;
   }
 }
