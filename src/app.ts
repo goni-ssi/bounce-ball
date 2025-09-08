@@ -48,14 +48,6 @@ class App {
     const KEYBOARD_MOVE_SPEED = 20;
     keyboardManager.subscribe((keys) => {
       keys.forEach((key) => {
-        if (key === "ArrowUp") {
-          this.#block.move(this.#block.x, this.#block.y - KEYBOARD_MOVE_SPEED);
-        }
-
-        if (key === "ArrowDown") {
-          this.#block.move(this.#block.x, this.#block.y + KEYBOARD_MOVE_SPEED);
-        }
-
         if (key === "ArrowLeft") {
           this.#block.move(this.#block.x - KEYBOARD_MOVE_SPEED, this.#block.y);
         }

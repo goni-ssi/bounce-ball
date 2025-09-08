@@ -89,9 +89,27 @@ export class Ball {
     );
 
     if (minDistanceX < minDistanceY) {
+      // 수평 충돌
       this.vx = -this.vx;
+      // 공을 블록 밖으로 밀어내기
+      if (this.x < block.x + block.width / 2) {
+        // 왼쪽에서 충돌
+        this.x = centerMinX;
+      } else {
+        // 오른쪽에서 충돌
+        this.x = centerMaxX;
+      }
     } else {
+      // 수직 충돌
       this.vy = -this.vy;
+      // 공을 블록 밖으로 밀어내기
+      if (this.y < block.y + block.height / 2) {
+        // 위쪽에서 충돌
+        this.y = centerMinY;
+      } else {
+        // 아래쪽에서 충돌
+        this.y = centerMaxY;
+      }
     }
   }
 }
