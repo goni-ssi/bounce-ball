@@ -1,4 +1,4 @@
-export class Block {
+export class Bar {
   x: number;
   y: number;
   width: number;

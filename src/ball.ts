@@ -1,4 +1,4 @@
-import { Block } from "./block";
+import { Bar } from "./bar";
 
 export class Ball {
   stageWidth: number;
@@ -38,7 +38,7 @@ export class Ball {
     this.bounceWindow = this.bounceWindow.bind(this);
   }
 
-  draw(ctx: CanvasRenderingContext2D, block: Block) {
+  draw(ctx: CanvasRenderingContext2D, block: Bar) {
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
 
@@ -63,7 +63,7 @@ export class Ball {
     }
   }
 
-  bounceBlock(block: Block) {
+  bounceBlock(block: Bar) {
     const centerMinX = block.x - this.radius;
     const centerMaxX = block.x + block.width + this.radius;
     const centerMinY = block.y - this.radius;

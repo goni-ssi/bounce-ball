@@ -1,5 +1,5 @@
 import { Ball } from "./ball";
-import { Block } from "./block";
+import { Bar } from "./bar";
 import { KeyboardManager } from "./keyboard-manager";
 
 class App {
@@ -9,7 +9,7 @@ class App {
   #stageWidth: number;
   #stageHeight: number;
   #ball: Ball;
-  #block: Block;
+  #block: Bar;
 
   constructor() {
     this.#canvas = document.createElement("canvas");
@@ -37,9 +37,9 @@ class App {
       radius: 60,
       speed: 25,
     });
-    this.#block = new Block({
-      x: 300,
-      y: 450,
+    this.#block = new Bar({
+      x: Math.floor(this.#stageWidth * 0.5) - 350,
+      y: Math.floor(this.#stageHeight * 0.85),
       width: 700,
       height: 30,
     });
