@@ -3,6 +3,8 @@ import { Bar } from "./bar";
 import { BlockMap } from "./block";
 import { KeyboardManager } from "./keyboard-manager";
 
+const WIDTH = 600;
+
 class App {
   #canvas: HTMLCanvasElement;
   #ctx: CanvasRenderingContext2D;
@@ -16,6 +18,10 @@ class App {
   constructor() {
     this.#canvas = document.createElement("canvas");
 
+    this.#canvas.style.margin = "0 auto";
+    this.#canvas.style.width = `${WIDTH}px`;
+
+    document.body.style = "display: flex";
     document.body.appendChild(this.#canvas);
     const context = this.#canvas.getContext("2d");
 
@@ -34,10 +40,12 @@ class App {
 
     this.resize();
     this.#bar = new Bar({
-      x: Math.floor(this.#stageWidth * 0.5) - 350,
+      x: Math.floor(this.#stageWidth * 0.5) - Math.floor(WIDTH / 3 / 2),
       y: Math.floor(this.#stageHeight * 0.85),
-      width: 700,
+      width: Math.floor(WIDTH / 3),
       height: 30,
+      stageWidth: this.#stageWidth,
+      stageHeight: this.#stageHeight,
     });
     this.#blockMap = new BlockMap({
       stageWidth: this.#stageWidth,
@@ -49,7 +57,7 @@ class App {
       stageWidth: this.#stageWidth,
       stageHeight: this.#stageHeight,
       radius: 30,
-      speed: 30,
+      speed: 5,
       x: Math.floor(this.#stageWidth * 0.5),
       y: Math.floor(this.#stageHeight * 0.5),
       bar: this.#bar,
@@ -72,7 +80,7 @@ class App {
   }
 
   resize() {
-    this.#stageWidth = document.body.clientWidth;
+    this.#stageWidth = WIDTH;
     this.#stageHeight = document.body.clientHeight;
 
     this.#canvas.width = this.#stageWidth * this.#pixelRatio;
