@@ -2,41 +2,57 @@ export class Hill {
   #stageWidth: number;
   #stageHeight: number;
   #points: { x: number; y: number }[];
-  #pointsCount: number;
   #speed: number;
+  #fillColor: string;
+  #gap: number;
 
   constructor({
     stageWidth,
     stageHeight,
     pointsCount,
     speed,
+    fillColor,
   }: {
     stageWidth: number;
     stageHeight: number;
     pointsCount: number;
     speed: number;
+    fillColor: string;
   }) {
     this.#stageWidth = stageWidth;
     this.#stageHeight = stageHeight;
-    this.#pointsCount = pointsCount;
     this.#speed = speed;
+    this.#fillColor = fillColor;
     this.#points = [];
+    this.#gap = Math.floor(this.#stageWidth / (pointsCount + 2));
 
-    for (let i = 0; i < this.#pointsCount; i++) {
-      const gap = Math.floor(this.#stageWidth / (this.#pointsCount - 2));
-
+    for (let i = -1; i < pointsCount + 1; i++) {
       const y = this.getRandomY();
 
-      this.#points.push({ x: i * gap, y });
+      this.#points.push({ x: i * this.#gap, y });
     }
   }
 
   draw(ctx: CanvasRenderingContext2D) {
-    ctx.fillStyle = "green";
+    ctx.fillStyle = this.#fillColor;
 
     ctx.beginPath();
 
     ctx.moveTo(this.#points[0].x, this.#points[0].y);
+
+    if (this.#points[0].x < -this.#gap * 2) {
+      this.#points.shift();
+    }
+
+    if (
+      this.#points[this.#points.length - 1].x <
+      this.#stageWidth + this.#gap
+    ) {
+      this.#points.push({
+        x: this.#points[this.#points.length - 1].x + this.#gap,
+        y: this.getRandomY(),
+      });
+    }
 
     for (let i = 0; i < this.#points.length - 1; i++) {
       const { x, y } = this.#points[i];
@@ -55,11 +71,15 @@ export class Hill {
     ctx.lineTo(this.#points[0].x, this.#points[0].y);
     ctx.fill();
     ctx.closePath();
+
+    this.#points.forEach((_, index) => {
+      this.#points[index].x -= this.#speed;
+    });
   }
 
   getRandomY() {
-    const min = Math.floor(this.#stageHeight * 0.45);
-    const max = Math.floor(this.#stageHeight * 0.8);
+    const min = Math.floor(this.#stageHeight * 0.5);
+    const max = Math.floor(this.#stageHeight * 0.9);
 
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }

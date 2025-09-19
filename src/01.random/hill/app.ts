@@ -32,8 +32,23 @@ class App {
       new Hill({
         stageWidth: this.#stageWidth,
         stageHeight: this.#stageHeight,
+        pointsCount: 7,
+        fillColor: "#fd6bea",
+        speed: 2,
+      }),
+      new Hill({
+        stageWidth: this.#stageWidth,
+        stageHeight: this.#stageHeight,
         pointsCount: 6,
-        speed: 1,
+        fillColor: "#ff59c2",
+        speed: 3,
+      }),
+      new Hill({
+        stageWidth: this.#stageWidth,
+        stageHeight: this.#stageHeight,
+        pointsCount: 5,
+        fillColor: "#ff4674",
+        speed: 4,
       }),
     ];
   }
