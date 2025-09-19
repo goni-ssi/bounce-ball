@@ -1,3 +1,4 @@
+import { Car } from "./car";
 import { Hill } from "./hill";
 
 class App {
@@ -7,6 +8,7 @@ class App {
   #stageWidth: number;
   #stageHeight: number;
   #hills: Hill[];
+  #car: Car;
 
   constructor() {
     this.#canvas = document.createElement("canvas");
@@ -51,6 +53,7 @@ class App {
         speed: 4,
       }),
     ];
+    this.#car = new Car();
   }
 
   resize() {
@@ -69,6 +72,12 @@ class App {
     for (let i = 0; i < this.#hills.length; i++) {
       this.#hills[i].draw(this.#ctx);
     }
+
+    this.#car.draw({
+      ctx: this.#ctx,
+      x: this.#stageWidth / 2,
+      y: this.#stageHeight / 2,
+    });
 
     requestAnimationFrame(this.animate);
   }
