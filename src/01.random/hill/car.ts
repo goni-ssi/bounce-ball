@@ -1,7 +1,17 @@
 export class Car {
   constructor() {}
 
-  draw({ ctx, x, y }: { ctx: CanvasRenderingContext2D; x: number; y: number }) {
+  draw({
+    ctx,
+    x,
+    y,
+    rotate,
+  }: {
+    ctx: CanvasRenderingContext2D;
+    x: number;
+    y: number;
+    rotate: number;
+  }) {
     const wheelRadius = 10;
     const wheelGap = 30;
     const wheelY = y - wheelRadius;
@@ -30,6 +40,14 @@ export class Car {
     const headLightRadius = 4;
     const headLightX = bodyRightX;
     const headLightY = (bodyBottomY + roofTopY) / 2 + headLightRadius - 2;
+
+    // canvas 회전 이전 상태 저장
+    ctx.save();
+
+    // 자동차 회전
+    ctx.translate(x, y);
+    ctx.rotate((rotate * Math.PI) / 180);
+    ctx.translate(-x, -y);
 
     // 자동차 본체 그리기
     ctx.beginPath();
@@ -92,6 +110,9 @@ export class Car {
     );
     ctx.fill();
     ctx.closePath();
+
+    // canvas 회전 원복
+    ctx.restore();
 
     // 헤드 라이트 불빛
     // ctx.fillStyle = "rgb(255,255,0, 0.6)";

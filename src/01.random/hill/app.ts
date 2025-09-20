@@ -1,6 +1,6 @@
 import { Car } from "./car";
 import { Hill } from "./hill";
-import { getYValuesFromX } from "./util/bezier";
+import { getSlopeAtPoint, getYValuesFromX } from "./util/bezier";
 
 class App {
   #canvas: HTMLCanvasElement;
@@ -90,26 +90,46 @@ class App {
       }, 0);
     const closestCurvePoint = curvePoints[closestCurvePointIndex];
 
-    const safeYValue = getYValuesFromX(
-      300,
-      {
+    const safeYValue = getYValuesFromX({
+      xTarget: 300,
+      p0: {
         x: closestCurvePoint.x1,
         y: closestCurvePoint.y1,
       },
-      {
+      p1: {
         x: closestCurvePoint.cx,
         y: closestCurvePoint.cy,
       },
-      {
+      p2: {
         x: closestCurvePoint.x2,
         y: closestCurvePoint.y2,
-      }
-    )[0];
+      },
+    })[0];
+
+    const slope = getSlopeAtPoint({
+      targetX: carX,
+      targetY: safeYValue,
+      p0: {
+        x: closestCurvePoint.x1,
+        y: closestCurvePoint.y1,
+      },
+      p1: {
+        x: closestCurvePoint.cx,
+        y: closestCurvePoint.cy,
+      },
+      p2: {
+        x: closestCurvePoint.x2,
+        y: closestCurvePoint.y2,
+      },
+    })[0];
+
+    const rotation = Math.atan(slope) * (180 / Math.PI);
 
     this.#car.draw({
       ctx: this.#ctx,
       x: carX,
       y: safeYValue,
+      rotate: rotation,
     });
 
     requestAnimationFrame(this.animate);
