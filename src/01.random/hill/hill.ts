@@ -2,6 +2,14 @@ export class Hill {
   #stageWidth: number;
   #stageHeight: number;
   #points: { x: number; y: number }[];
+  #curvePoints: {
+    x1: number;
+    y1: number;
+    x2: number;
+    y2: number;
+    cx: number;
+    cy: number;
+  }[];
   #speed: number;
   #fillColor: string;
   #gap: number;
@@ -24,6 +32,7 @@ export class Hill {
     this.#speed = speed;
     this.#fillColor = fillColor;
     this.#points = [];
+    this.#curvePoints = [];
     this.#gap = Math.floor(this.#stageWidth / (pointsCount + 2));
 
     for (let i = -1; i < pointsCount + 1; i++) {
@@ -54,6 +63,9 @@ export class Hill {
       });
     }
 
+    this.#curvePoints = [];
+    let prevCx = 0;
+    let prevCy = 0;
     for (let i = 0; i < this.#points.length - 1; i++) {
       const { x, y } = this.#points[i];
 
@@ -62,6 +74,18 @@ export class Hill {
 
       const cx = (x + nextX) / 2;
       const cy = (y + nextY) / 2;
+
+      this.#curvePoints.push({
+        x1: prevCx,
+        y1: prevCy,
+        x2: cx,
+        y2: cy,
+        cx: x,
+        cy: y,
+      });
+
+      prevCx = cx;
+      prevCy = cy;
 
       ctx.quadraticCurveTo(x, y, cx, cy);
     }
@@ -82,5 +106,9 @@ export class Hill {
     const max = Math.floor(this.#stageHeight * 0.9);
 
     return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  getCurvePoints() {
+    return this.#curvePoints;
   }
 }

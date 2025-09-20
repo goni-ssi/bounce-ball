@@ -1,5 +1,6 @@
 import { Car } from "./car";
 import { Hill } from "./hill";
+import { getYValuesFromX } from "./util/bezier";
 
 class App {
   #canvas: HTMLCanvasElement;
@@ -73,10 +74,42 @@ class App {
       this.#hills[i].draw(this.#ctx);
     }
 
+    const carX = 300;
+    const curvePoints = this.#hills[2].getCurvePoints();
+    const closestCurvePointIndex = this.#hills[2]
+      .getCurvePoints()
+      .reduce((closestIndex, point, index) => {
+        if (
+          Math.abs(point.x1 - carX) <
+          Math.abs(curvePoints[closestIndex].x1 - carX)
+        ) {
+          return index - 1;
+        }
+
+        return closestIndex;
+      }, 0);
+    const closestCurvePoint = curvePoints[closestCurvePointIndex];
+
+    const safeYValue = getYValuesFromX(
+      300,
+      {
+        x: closestCurvePoint.x1,
+        y: closestCurvePoint.y1,
+      },
+      {
+        x: closestCurvePoint.cx,
+        y: closestCurvePoint.cy,
+      },
+      {
+        x: closestCurvePoint.x2,
+        y: closestCurvePoint.y2,
+      }
+    )[0];
+
     this.#car.draw({
       ctx: this.#ctx,
-      x: this.#stageWidth / 2,
-      y: this.#stageHeight / 2,
+      x: carX,
+      y: safeYValue,
     });
 
     requestAnimationFrame(this.animate);
